@@ -56,7 +56,7 @@
             text-align: center;
         }
         #preview canvas {
-            max-width:65%;
+            max-width: 65%;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -106,8 +106,8 @@
             const originalPhotos = document.querySelectorAll('.photo img');
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 1800; // 6 inches x 300 DPI = 1800 pixels
-            canvas.height = 1200; // 4 inches x 300 DPI = 1200 pixels
+            canvas.width = 3600; // 6 inches x 600 DPI = 3600 pixels
+            canvas.height = 2400; // 4 inches x 600 DPI = 2400 pixels
 
             // Draw photos
             const photoWidth = canvas.width / 4 - 10; // Adjust for gap
@@ -134,8 +134,8 @@
             const originalPhotos = document.querySelectorAll('.photo img');
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 1800; // 6 inches x 300 DPI = 1800 pixels
-            canvas.height = 1200; // 4 inches x 300 DPI = 1200 pixels
+            canvas.width = 3600; // 6 inches x 600 DPI = 3600 pixels
+            canvas.height = 2400; // 4 inches x 600 DPI = 2400 pixels
 
             // Clear canvas with white background
             ctx.fillStyle = 'white';

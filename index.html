@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passport Photo Maker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px; /* Adjust as needed */
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, p {
+            text-align: center;
+        }
+        #photo-input {
+            display: block;
+            margin: 20px auto;
+        }
+        #photo-preview {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .photo {
+            width: calc(5% - 5px); /* Adjust for gap */
+            box-sizing: border-box;
+            position: relative;
+        }
+        .photo img {
+            width: 100%;
+            display: block;
+        }
+        #download-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #preview canvas {
+            max-width:65%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Passport Photo Maker</h1>
+        <p><strong>Step 1: Upload Photo</strong></p>
+        <input type="file" id="photo-input" accept="image/*">
+        <div id="photo-preview"></div>
+        <button id="download-btn" disabled>Download & Print</button>
+        <div id="preview"></div>
+    </div>
+
+    <script>
+        document.getElementById('photo-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    document.getElementById('photo-preview').innerHTML = ''; // Clear previous photos
+                    for (let i = 0; i < 8; i++) {
+                        const photoContainer = document.createElement('div');
+                        photoContainer.className = 'photo';
+                        const photo = document.createElement('img');
+                        photo.src = e.target.result;
+                        photoContainer.appendChild(photo);
+                        document.getElementById('photo-preview').appendChild(photoContainer);
+                        addBorder(photoContainer);
+                    }
+                    document.getElementById('download-btn').disabled = false;
+                    generatePreview();
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function addBorder(photoContainer) {
+            photoContainer.style.border = '3px solid black';
+        }
+
+        function generatePreview() {
+            const originalPhotos = document.querySelectorAll('.photo img');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1800; // 6 inches x 300 DPI = 1800 pixels
+            canvas.height = 1200; // 4 inches x 300 DPI = 1200 pixels
+
+            // Draw photos
+            const photoWidth = canvas.width / 4 - 10; // Adjust for gap
+            const photoHeight = canvas.height / 2 - 10; // Adjust for gap
+            let xOffset = 0, yOffset = 0;
+            originalPhotos.forEach((photo, index) => {
+                const x = xOffset * (photoWidth + 10) + 5;
+                const y = yOffset * (photoHeight + 10) + 5;
+                ctx.drawImage(photo, x, y, photoWidth, photoHeight);
+                xOffset++;
+                if (xOffset >= 4) {
+                    xOffset = 0;
+                    yOffset++;
+                }
+            });
+
+            // Display preview
+            const preview = document.getElementById('preview');
+            preview.innerHTML = ''; // Clear previous preview
+            preview.appendChild(canvas);
+        }
+
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const originalPhotos = document.querySelectorAll('.photo img');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1800; // 6 inches x 300 DPI = 1800 pixels
+            canvas.height = 1200; // 4 inches x 300 DPI = 1200 pixels
+
+            // Clear canvas with white background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw photos
+            const photoWidth = canvas.width / 4 - 10; // Adjust for gap
+            const photoHeight = canvas.height / 2 - 10; // Adjust for gap
+            let xOffset = 0, yOffset = 0;
+            originalPhotos.forEach((photo, index) => {
+                const x = xOffset * (photoWidth + 10) + 5;
+                const y = yOffset * (photoHeight + 10) + 5;
+                ctx.drawImage(photo, x, y, photoWidth, photoHeight);
+                // Add stroke
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, photoWidth, photoHeight);
+                xOffset++;
+                if (xOffset >= 4) {
+                    xOffset = 0;
+                    yOffset++;
+                }
+            });
+
+            // Convert canvas to data URL and provide download link
+            const downloadLink = document.createElement('a');
+            downloadLink.href = canvas.toDataURL('image/jpeg');
+            downloadLink.download = 'passport_photo_grid_6x4.jpg';
+            downloadLink.click();
+        });
+    </script>
+</body>
+</html>
